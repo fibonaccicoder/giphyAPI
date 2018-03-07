@@ -1,8 +1,8 @@
-$(document).ready(function () {
+$(document).ready(function() {
 
 var reactions = ["anger", "love", "happy", "cute", "cuddle", "annoyed", "irritated", "hug", "kiss", "sad"];
 var APIKey = "s3ZDUTZMiKXdgbfp7sj2bUGFqMfXTpUS";
-var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=" + APIKey + "&q=" + reaction + "&limit=15&offset=0&lang=en";
+var queryURL = "https://api.giphy.com/v1/gifs/search?&q=" + reaction + "&lang=en&api_key=" + APIKey + "&limit=15";
 
 
 //creates buttons from items in reactions array
@@ -21,13 +21,14 @@ var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=" + APIKey + "&q=" 
     event.preventDefault();
     var newButton = $("#search-term").val().trim();
     reactions.push(newButton);
+    $("#search-term").val(" ");
     createButtons();
     });
 
 
 function displayGifs(){
   //inputs search term into query url to get specific gifs
-  var reaction = $(this).data("name");
+  var reaction = $(this).val("#search-term");
 //ajax call for json object
 	 $.ajax({
       url: queryURL,
@@ -38,37 +39,36 @@ function displayGifs(){
 //empty gif div from previous call
       $("#gif-view").empty();
 //gives attributes for variables for image, gif, and rating
-      var animatedGif = $("<img/>").attr("src", response.data[i].images.fixed_height_still.url);
+      var animatedGif = $("<img>").attr("src", response.data[i].images.fixed_height.url);
       var rating = $("<p>").text(response.data[i].rating);
+//appends items to gif-view div
+      $("#gif-view").append(animatedGif, rating);
     })
 }
 
-//pause thos mofos
-  $(".gif").on("click", function() {
-      
-      var state = $(this).attr("data-state");
-     
-      if (state === "still") {
-        $(this).attr("src", $(this).attr("data-animate"));
-        $(this).attr("data-state", "animate");
-      } else {
-        $(this).attr("src", $(this).attr("data-still"));
-        $(this).attr("data-state", "still");
-      }
-})
-}
+//may or many not pause gifs when clicked on lol
+  $('.img').on("click", function(){
+        var src = $(this).attr('src')
+        if(src.includes('_s.gif')){
+          $(this).attr('src', src.replace('_s.gif','.gif'));
+           }
+        else{
+          $(this).attr('src', src.replace('.gif','_s.gif'));
+         }
+       })
+     };
+  }
 
 //function call
 
- $(document).on("click", ".topic", createButtons);
+ $(document).on("click", ".buttons", displayGifs);
+    createButtons();
 
-
-
-
+}
 
 //dynamically create buttons
 //create buttons when added to search box
-//pull up specific api info when each specific button is clicked
+//pull up unique api according to the data attributes when each specific button is clicked
 //push new search to topics array to be displayed when clicked on 
 //pause gifs until clicked on 
 //pull up gifs, use parameters q, limit and rating
