@@ -2,24 +2,24 @@ $(document).ready(function () {
 
 var reactions = ["anger", "love", "happy", "cute", "cuddle", "annoyed", "irritated", "hug", "kiss", "sad"];
 var APIKey = "s3ZDUTZMiKXdgbfp7sj2bUGFqMfXTpUS";
-var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=" + APIKey +"&q=" + reaction +"&limit=25&offset=0&rating=G&lang=en";
+var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=" + APIKey + "&q=" + reaction + "&limit=15&offset=0&lang=en";
 
 
 //creates buttons from items in reactions array
  function createButtons(){
      for(var i =0; i < reactions.length; i++){
       var gifButton = $("<button>");
-      gifButton.addClass("buttons");
-      gifButton.attr("data-name", reactions[i]);
+      gifButton.addClass("buttons btn btn-standard");
+      gifButton.attr("data-name", reaction);
       gifButton.text(reactions[i]);
-      $('#gif-view').append(gifButton);
+      $('#button-space').append(gifButton);
     }
 
  //settings for submit button, prevents page reload on submit click
  //adds new topics to reactions array to be rendered into new buttons on page
     $("#add-subject").on("click", function(event) {
     event.preventDefault();
-    var newButton = $("#text-input").val().trim();
+    var newButton = $("#search-term").val().trim();
     reactions.push(newButton);
     createButtons();
     });
@@ -37,11 +37,9 @@ function displayGifs(){
       console.log(response);
 //empty gif div from previous call
       $("#gif-view").empty();
-//
-      var stillImg = (response.data[i].images.downsized_still.url);
-      var animatedGif = $("<img>").attr("src", imageURL);
-      var rating = (response.data[i].rating);
-
+//gives attributes for variables for image, gif, and rating
+      var animatedGif = $("<img/>").attr("src", response.data[i].images.fixed_height_still.url);
+      var rating = $("<p>").text(response.data[i].rating);
     })
 }
 
@@ -57,12 +55,13 @@ function displayGifs(){
         $(this).attr("src", $(this).attr("data-still"));
         $(this).attr("data-state", "still");
       }
-}
 })
+}
 
 //function call
-createButtons();
-displayGifs();
+
+ $(document).on("click", ".topic", createButtons);
+
 
 
 
